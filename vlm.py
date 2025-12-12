@@ -7,31 +7,25 @@ from transformers import AutoTokenizer, AutoImageProcessor, VisionEncoderDecoder
 from tqdm import tqdm
 import time
 
-# =========================
-# CONFIG
-# =========================
+
 MODEL_PATH = "cnmoro/tiny-image-captioning"
 TEST_IMG_DIR = Path("./data/processed/test/")
 TEST_CAPTIONS_CSV = Path("./data/processed/test_captions.csv")
 OUTPUT_CSV = Path("./vlm_predictions.csv")
 
-# =========================
-# LOAD VLM MODEL
-# =========================
+
 print("Loading VLM model...")
 model = VisionEncoderDecoderModel.from_pretrained(MODEL_PATH)
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
 image_processor = AutoImageProcessor.from_pretrained(MODEL_PATH)
 
-# Move to GPU if available
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = model.to(device)
 model.eval()
 print(f"Model loaded on {device}")
 
-# =========================
-# LOAD TEST CAPTIONS (to get image names)
-# =========================
+
 print("Loading test captions...")
 test_images = set()
 with open(TEST_CAPTIONS_CSV, 'r', encoding='utf-8') as f:
@@ -42,9 +36,7 @@ with open(TEST_CAPTIONS_CSV, 'r', encoding='utf-8') as f:
 test_images = sorted(list(test_images))
 print(f"Found {len(test_images)} unique test images")
 
-# =========================
-# TRANSFORM FOR .pt FILES
-# =========================
+
 # If .pt files are normalized tensors, we need to denormalize them
 # Standard ImageNet normalization
 mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
@@ -64,9 +56,7 @@ def tensor_to_pil(tensor):
     img_array = (tensor.permute(1, 2, 0).cpu().numpy() * 255).astype('uint8')
     return Image.fromarray(img_array)
 
-# =========================
-# INFERENCE
-# =========================
+
 print("\nGenerating captions...")
 results = []
 total_time = 0
@@ -118,9 +108,7 @@ with torch.no_grad():
             failed_images.append(img_name)
             continue
 
-# =========================
-# SAVE RESULTS
-# =========================
+
 print(f"\nSaving predictions to {OUTPUT_CSV}...")
 with open(OUTPUT_CSV, 'w', newline='', encoding='utf-8') as f:
     fieldnames = ['image', 'predicted_caption', 'inference_time']
@@ -128,9 +116,6 @@ with open(OUTPUT_CSV, 'w', newline='', encoding='utf-8') as f:
     writer.writeheader()
     writer.writerows(results)
 
-# =========================
-# STATISTICS
-# =========================
 print("\n" + "="*50)
 print("INFERENCE COMPLETE")
 print("="*50)
@@ -142,12 +127,12 @@ print(f"Output saved to: {OUTPUT_CSV}")
 
 if failed_images:
     print(f"\nFailed images ({len(failed_images)}):")
-    for img in failed_images[:10]:  # Show first 10
+    for img in failed_images[:10]:  
         print(f"  - {img}")
     if len(failed_images) > 10:
         print(f"  ... and {len(failed_images) - 10} more")
 
-# Show some examples
+
 print("\n" + "="*50)
 print("SAMPLE PREDICTIONS")
 print("="*50)
