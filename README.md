@@ -14,9 +14,9 @@ Les fichiers ci-dessous contiennent les entraînements, tests et visualisations 
 | `ft_vgg_lstm.ipynb` | Version fine-tunée du modèle précédent (derniers blocs VGG entraînés). |
 | `vgg_transformer.ipynb` | VGG-16 gelé → MLP → Transformer Decoder. |
 | `ft_vgg_transformer.ipynb` | Version fine-tunée du modèle VGG → Transformer. |
-| `vit.ipynb` | Encodeur Vision Transformer appliqué à l’image. |
+| `vit.ipynb` | Encodeur Vision Transformer. (ajouté par rapport à la soutenance)|
 | `script_eval.ipynb` | Évaluations BLEU, ROUGE-L, METEOR, CIDEr, BERTScore. |
 | `vlm.py` |  Script d'inférence du vlm sur l'ensemble de test |
 | `captions_gen/` | Contient les légendes générées automatiquement par toutes les architectures testées. Sert à comparer la qualité des générations. |
-
+|`evaluations/`| Contient l'évaluation des différentes architctures sur l'ensemble de test.
 ---
